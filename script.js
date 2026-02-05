@@ -38,11 +38,12 @@ function renderProducts() {
   });
 }
 
-// ---------------- RENDER CART ----------------
 function renderCart() {
+  const cartList = document.getElementById("cart-list");
   cartList.innerHTML = "";
 
-  const cart = getCart();
+  const cart =
+    JSON.parse(window.sessionStorage.getItem("cart")) || [];
 
   cart.forEach((item) => {
     const li = document.createElement("li");
@@ -51,16 +52,27 @@ function renderCart() {
   });
 }
 
-// ---------------- ADD TO CART ----------------
 function addToCart(productId) {
-  const cart = getCart();
+  // 1️⃣ Read existing cart (important: do NOT assume empty)
+  const existingCart =
+    JSON.parse(window.sessionStorage.getItem("cart")) || [];
 
+  // 2️⃣ Find product
   const product = products.find((p) => p.id === productId);
-  cart.push(product);
 
-  saveCart(cart);
+  // 3️⃣ Append product
+  existingCart.push(product);
+
+  // 4️⃣ Save back (MERGE, not overwrite)
+  window.sessionStorage.setItem(
+    "cart",
+    JSON.stringify(existingCart)
+  );
+
+  // 5️⃣ Update UI
   renderCart();
 }
+
 
 // ---------------- CLEAR CART ----------------
 function clearCart() {
