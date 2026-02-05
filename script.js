@@ -45,14 +45,15 @@ function renderCart() {
 
 // Add item to cart
 function addToCart(productId) {
-  const cart = getCart();
+  const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
 
   const product = products.find((p) => p.id === productId);
   cart.push(product);
 
-  saveCart(cart);
+  sessionStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
 }
+
 function saveCart(cart) {
   sessionStorage.setItem("cart", JSON.stringify(cart));
 }
