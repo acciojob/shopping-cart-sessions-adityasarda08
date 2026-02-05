@@ -1,5 +1,3 @@
-// This is the boilerplate code given for you
-// You can modify this code
 // Product data
 const products = [
   { id: 1, name: "Product 1", price: 10 },
@@ -11,27 +9,37 @@ const products = [
 
 // DOM elements
 const productList = document.getElementById("product-list");
+const cartList = document.getElementById("cart-list");
+const clearCartBtn = document.getElementById("clear-cart-btn");
 
-// Render product list
+// ---------------- CART HELPERS ----------------
+function getCart() {
+  return JSON.parse(sessionStorage.getItem("cart")) || [];
+}
+
+function saveCart(cart) {
+  sessionStorage.setItem("cart", JSON.stringify(cart));
+}
+
+// ---------------- RENDER PRODUCTS ----------------
 function renderProducts() {
+  productList.innerHTML = "";
+
   products.forEach((product) => {
     const li = document.createElement("li");
+    li.textContent = `${product.name} - $${product.price} `;
 
     const btn = document.createElement("button");
     btn.textContent = "Add to Cart";
     btn.addEventListener("click", () => addToCart(product.id));
 
-    li.textContent = `${product.name} - $${product.price} `;
     li.appendChild(btn);
-
     productList.appendChild(li);
   });
 }
 
-
-// Render cart list
+// ---------------- RENDER CART ----------------
 function renderCart() {
-  const cartList = document.getElementById("cart-list");
   cartList.innerHTML = "";
 
   const cart = getCart();
@@ -43,40 +51,26 @@ function renderCart() {
   });
 }
 
-// Add item to cart
+// ---------------- ADD TO CART ----------------
 function addToCart(productId) {
-  const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+  const cart = getCart();
 
   const product = products.find((p) => p.id === productId);
   cart.push(product);
-
-  sessionStorage.setItem("cart", JSON.stringify(cart));
-  renderCart();
-}
-
-function saveCart(cart) {
-  sessionStorage.setItem("cart", JSON.stringify(cart));
-}
-function getCart() {
-  return JSON.parse(sessionStorage.getItem("cart")) || [];
-}
-
-// Remove item from cart
-function removeFromCart(productId) {
-  let cart = getCart();
-
-  cart = cart.filter((item) => item.id !== productId);
 
   saveCart(cart);
   renderCart();
 }
 
-// Clear cart
+// ---------------- CLEAR CART ----------------
 function clearCart() {
   sessionStorage.removeItem("cart");
   renderCart();
 }
 
-// Initial render
+// ---------------- EVENTS ----------------
+clearCartBtn.addEventListener("click", clearCart);
+
+// ---------------- INITIAL LOAD ----------------
 renderProducts();
 renderCart();
